@@ -1,0 +1,22 @@
+﻿[
+  {
+    "inputs": [ "Assets/ts/*.ts" ],
+    "output": "Scripts/@.js"
+  },
+  {
+    "inputs": [ "Assets/ts/ext/fullcalendar/*.ts", "Assets/ts/ext/fullcalendar/*.js" ],
+    "output": "Scripts/ext/fullcalendar/@.js"
+  },
+  {
+    "inputs": [ "Assets/ts/ext/fullcalendar/locale/*.js" ],
+    "output": "Scripts/ext/fullcalendar/lang-all.js"
+  },
+  {
+    "inputs": [ "Assets/css/ext/fullcalendar/*.css" ],
+    "output":  "Styles/ext/fullcalendar/@.css"
+  },
+  {
+    "inputs": [ "Assets/css/*.css" ],
+    "output":  "Styles/@.css"
+  }
+]
