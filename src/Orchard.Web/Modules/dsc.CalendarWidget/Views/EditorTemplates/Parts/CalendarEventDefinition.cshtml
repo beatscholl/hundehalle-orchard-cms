@@ -6,15 +6,15 @@
 @using System.Web.WebPages;
 
 @{
-    Style.Require("jQueryCalendars_Picker");
-    Style.Require("jQueryUI_Calendars_Picker");
-    Style.Require("jQueryTimeEntry");
-    Style.Require("jQueryDateTimeEditor");
+  Style.Require("jQueryCalendars_Picker");
+  Style.Require("jQueryUI_Calendars_Picker");
+  Style.Require("jQueryTimeEntry");
+  Style.Require("jQueryDateTimeEditor");
 
-    Script.Require("jQueryCalendars_All").AtFoot();
-    Script.Require("jQueryCalendars_Picker_Ext").AtFoot();
-    Script.Require("jQueryTimeEntry").AtFoot();
-    Script.Require("jQueryDateTimeEditor").AtFoot();
+  Script.Require("jQueryCalendars_All").AtFoot();
+  Script.Require("jQueryCalendars_Picker_Ext").AtFoot();
+  Script.Require("jQueryTimeEntry").AtFoot();
+  //Script.Require("jQueryDateTimeEditor").AtFoot();
 }
 
 <fieldset>
@@ -23,23 +23,23 @@
 </fieldset>
 
 <fieldset>
-    @Html.LabelFor(m => m.StartDate, T("Start date and time"))
-    <label class="forpicker" for="@Html.FieldIdFor(m=>m.StartDate)">@T("Date")</label>
-    <span class="startDate">@Html.EditorFor(m => m.StartDate, new { @autofocus = "autofocus" })</span>
-
-    <label class="forpicker" for="@Html.FieldIdFor(m=>m.StartTime)">@T("Time")</label>
-    <span class="startTime" style="@(Model.IsAllDay ? "display:none;" : "")">@Html.EditorFor(m => m.StartTime)</span>
-    <span class="hint">@T("Enter the start date and time for the event")</span>
+  <div class="editor-label">
+    <label for="@Html.FieldIdFor(m => m.StartDateTimeProxy)">@T(Html.DisplayNameFor(m => m.StartDateTimeProxy).AsString())</label>
+  </div>
+  <div class="editor-field">
+    @Html.EditorFor(m => m.StartDateTimeProxy) @* will render Orchard`s datetime editor, see Orchard.Resources/Views/EditorTemplates/DateTimeEditor *@
+    @Html.ValidationMessageFor(m => m.StartDateTimeProxy)
+  </div>
 </fieldset>
 
 <fieldset>
-    @Html.LabelFor(m => m.EndDate, T("End date and time"))
-    <label class="forpicker" for="@Html.FieldIdFor(m=>m.EndDate)">@T("Date")</label>
-    <span class="endDate">@Html.EditorFor(m => m.EndDate)</span>
-
-    <label class="forpicker" for="@Html.FieldIdFor(m=>m.EndTime)">@T("Time")</label>
-    <span class="endTime" style="@(Model.IsAllDay ? "display:none;" : "")">@Html.EditorFor(m => m.EndTime)</span>
-    <span class="hint">@T("Enter the end date and time for the event")</span>
+  <div class="editor-label">
+    <label for="@Html.FieldIdFor(m => m.EndDateTimeProxy)">@T(Html.DisplayNameFor(m => m.EndDateTimeProxy).AsString())</label>
+  </div>
+  <div class="editor-field">
+    @Html.EditorFor(m => m.EndDateTimeProxy) @* will render Orchard`s datetime editor, see Orchard.Resources/Views/EditorTemplates/DateTimeEditor *@
+    @Html.ValidationMessageFor(m => m.EndDateTimeProxy)
+  </div>
 </fieldset>
 
 <fieldset>
