@@ -4,6 +4,7 @@
 @using Orchard.Projections.Models;
 @using Orchard.ContentManagement;
 @using System.Web.WebPages;
+@using System.Web.Mvc.Html;
 
 @{
   Style.Require("jQueryCalendars_Picker");
@@ -24,7 +25,7 @@
 
 <fieldset>
   <div class="editor-label">
-    <label for="@Html.FieldIdFor(m => m.StartDateTimeProxy)">@T(Html.DisplayNameFor(m => m.StartDateTimeProxy).AsString())</label>
+    <label for="@Html.FieldIdFor(m => m.StartDateTimeProxy)">@T(Html.DisplayNameFor(m => m.StartDateTimeProxy).ToString())</label>
   </div>
   <div class="editor-field">
     @Html.EditorFor(m => m.StartDateTimeProxy) @* will render Orchard`s datetime editor, see Orchard.Resources/Views/EditorTemplates/DateTimeEditor *@
@@ -34,7 +35,7 @@
 
 <fieldset>
   <div class="editor-label">
-    <label for="@Html.FieldIdFor(m => m.EndDateTimeProxy)">@T(Html.DisplayNameFor(m => m.EndDateTimeProxy).AsString())</label>
+    <label for="@Html.FieldIdFor(m => m.EndDateTimeProxy)">@T(Html.DisplayNameFor(m => m.EndDateTimeProxy).ToString())</label>
   </div>
   <div class="editor-field">
     @Html.EditorFor(m => m.EndDateTimeProxy) @* will render Orchard`s datetime editor, see Orchard.Resources/Views/EditorTemplates/DateTimeEditor *@

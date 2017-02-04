@@ -22,18 +22,14 @@ namespace dsc.CalendarWidget.Drivers
 
     public Localizer T { get; set; }
 
-    public CalendarEventDefinitionDriver(HttpContextBase context, IWorkContextAccessor workContextAccessor)
+    public CalendarEventDefinitionDriver(HttpContextBase context, IWorkContextAccessor workContextAccessor, Orchard.Localization.Services.IDateLocalizationServices dateLocalizationService)
     {
       _workContextAccessor = workContextAccessor;
       _context = context;
+      _dateLocalizationServices = dateLocalizationService;
       T = NullLocalizer.Instance;
     }
 
-    public CalendarEventDefinitionDriver(Orchard.Localization.Services.IDateLocalizationServices dateLocalizationServices)
-    {
-      T = NullLocalizer.Instance;
-      _dateLocalizationServices = dateLocalizationServices;
-    }
     protected override string Prefix
     {
       get { return "CalendarEventDefinition"; }

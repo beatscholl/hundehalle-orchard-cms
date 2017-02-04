@@ -5,6 +5,7 @@ using System.Reflection;
 using Orchard.Core.Common.ViewModels;
 using Orchard.Localization;
 using Orchard.Localization.Services;
+using System.Linq;
 
 namespace dsc.CalendarWidget.Models
 {
@@ -21,19 +22,10 @@ namespace dsc.CalendarWidget.Models
       set { Record.TimeZone = value; }
     }
 
-    public DateTime? StartDateTimeUtc
-    {
-      get { return Retrieve(r => r.StartDateTimeUtc); }
-      set { Store(r => r.StartDateTimeUtc, value); }
-    }
-
     public DateTime? StartDateTime
     {
-      get
-      {
-        var v = StartDateTimeFromUtc;
-        return (v.HasValue) ? (DateTime?)DateLocalizationServices.ConvertToSiteTimeZone(v.Value) : null;
-      }
+      get { return Retrieve(r => r.StartDateTime); }
+      set { Store(r => r.StartDateTimeUtc, value); }
     }
 
     // This property is needed to render Orchard`s date time editor correctly
@@ -56,7 +48,7 @@ namespace dsc.CalendarWidget.Models
 
       set
       {
-        StartDateTimeFromUtc = CreateActualPropertyValue(value, "ValidFromProxy");
+        StartDateTime = CreateActualPropertyValue(value, "StartDateTimeProxy");
       }
     }
 
@@ -73,17 +65,12 @@ namespace dsc.CalendarWidget.Models
       get { return !IsAllDay; }
     }
 
-    public DateTime? EndDateTimeUtc
+    public DateTime? EndDateTime
     {
       get { return Retrieve(r => r.EndDateTimeUtc); }
       set { Store(r => r.EndDateTimeUtc, value); }
     }
 
-    public DateTime? EndDateTime
-    {
-      get { return Record.EndDateTimeUtc; }
-      set { Record.EndDateTimeUtc = value; }
-    }
     // This property is needed to render Orchard`s date time editor correctly
     [Display(Name = "End date time")]
     public DateTimeEditor EndDateTimeProxy
@@ -104,7 +91,7 @@ namespace dsc.CalendarWidget.Models
 
       set
       {
-        EndDateTimeFromUtc = CreateActualPropertyValue(value, "ValidFromProxy");
+        EndDateTime = CreateActualPropertyValue(value, "EndDateTimeProxy");
       }
     }
     public string EndDate { get; set; }
@@ -138,38 +125,34 @@ namespace dsc.CalendarWidget.Models
       set { Record.IsRecurring = value; }
     }
 
-    private DateTime? StartDateTimeFromUtc { get; set; }
-
-    private DateTime? EndDateTimeFromUtc { get; set; }
-
     private DateTime? CreateActualPropertyValue(DateTimeEditor proxyPropertyValue, string proxyPropertyName)
     {
-      DateTime? v = null;
+      DateTime? propertyValue = null;
 
       // the following date/time handling is based on Orchard.Fields.Drivers.DateTimeFieldDriver
       bool hasDate = !string.IsNullOrEmpty(proxyPropertyValue.Date);
       bool hasTime = !string.IsNullOrEmpty(proxyPropertyValue.Time);
-      var lPropertyName = T(this.GetPropertyAttribute<DisplayAttribute>(proxyPropertyName).Name);
+      var propertyDisplayName = T(this.GetPropertyAttribute<DisplayAttribute>(proxyPropertyName));
 
       if (hasDate && hasTime)
       {
         try
         {
-          v = DateLocalizationServices.ConvertFromLocalizedString(proxyPropertyValue.Date, proxyPropertyValue.Time,
-            new Orchard.Localization.Models.DateLocalizationOptions { EnableTimeZoneConversion = true });
+          propertyValue = DateLocalizationServices.ConvertFromLocalizedString(proxyPropertyValue.Date, proxyPropertyValue.Time,
+          new Orchard.Localization.Models.DateLocalizationOptions { EnableTimeZoneConversion = true });
         }
         catch
         {
-          Updater.AddModelError(PartDefinition.Name + "." + proxyPropertyName, T("{0} could not be parsed as a valid date and time.", lPropertyName));
+          Updater.AddModelError(PartDefinition.Name + "." + proxyPropertyName, T("{0} could not be parsed as a valid date and time.", propertyDisplayName));
         }
       }
       else
       {
         if (!hasDate && hasTime)
-          Updater.AddModelError(PartDefinition.Name + "." + proxyPropertyName, T("{0} requires a date.", lPropertyName));
+          Updater.AddModelError(PartDefinition.Name + "." + proxyPropertyName, T("{0} requires a date.", propertyDisplayName));
         else
         if (hasDate && !hasTime)
-          Updater.AddModelError(PartDefinition.Name + "." + proxyPropertyName, T("{0} requires a time.", lPropertyName));
+          Updater.AddModelError(PartDefinition.Name + "." + proxyPropertyName, T("{0} requires a time.", propertyDisplayName));
         else
         {
           // consider both fields empty as "no date time selection",
@@ -177,12 +160,15 @@ namespace dsc.CalendarWidget.Models
         }
       }
 
-      return v;
+      return propertyValue;
     }
 
-    private PropertyInfo GetPropertyAttribute<T>(string proxyPropertyName)
+    private string GetPropertyAttribute<T>(string proxyPropertyName)
     {
-      return (typeof(CalendarEventDefinition)).GetProperty(proxyPropertyName);
+      PropertyInfo propertyInfo =  (typeof(CalendarEventDefinition)).GetProperty(proxyPropertyName);
+      DisplayAttribute displayAttribute = propertyInfo.GetCustomAttributes(true).FirstOrDefault(a => a is DisplayAttribute) as DisplayAttribute;
+
+      return displayAttribute.Name ?? "";
     }
   }
 }
